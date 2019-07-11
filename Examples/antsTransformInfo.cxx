@@ -18,8 +18,8 @@
 #include "antsUtilities.h"
 
 #include "antsCommandLineParser.h"
+#include "itkANTSAffine3DTransform.h"
 #include "itkTransformFileReader.h"
-
 #include <sstream>
 
 namespace ants
@@ -70,15 +70,36 @@ private:
   };
   Cleanup_argv cleanup_argv( argv, argc + 1 );
 
-  for (int i=1; i<argc; i++) {
+  for (int i=1; i<argc; i++)
+    {
 
     std::cout << "Transform file: " << argv[i] << std::endl;
-
+    std::cout << "ITK transform info: " << argv[i] << std::endl;
+    
     itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();
     reader->SetFileName( argv[i] );
     reader->Update();
 
     std::cout << *(reader->GetTransformList()->begin()) << std::endl;
+
+    std::cout << "ANTs transform info for 3D affine transform: " << argv[i] << std::endl;
+    
+    typedef itk::MatrixOffsetTransformBase<double, 3, 3> AffineTransformType;
+
+    typename AffineTransformType::Pointer aff =
+      dynamic_cast<AffineTransformType *>( ( reader->GetTransformList() )->front().GetPointer() );
+        
+    typedef itk::ANTSAffine3DTransform<double> InternalAffineTransformType;
+
+    InternalAffineTransformType::Pointer iAff = InternalAffineTransformType::New();
+    
+    iAff->SetCenter( aff->GetCenter() );
+    iAff->SetMatrix( aff->GetMatrix() );
+    iAff->SetTranslation( aff->GetTranslation() );
+
+    std::cout << iAff << std::endl;
+
+    
     }
 
   return EXIT_SUCCESS;
