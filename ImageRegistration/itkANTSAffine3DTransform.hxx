@@ -715,8 +715,8 @@ void ANTSAffine3DTransform<TScalarType>::ComputeMatrixParameters()
     }
 
   std::cout << "A=" << A << std::endl;
-  std::cout << "rotation R" << Q << std::endl;
-  std::cout << "upper R" << R << std::endl;
+  std::cout << "rotation R=" << Q << std::endl;
+  std::cout << "upper R=" << R << std::endl;
   std::cout << "s=" << s << " u=" << u << " v=" << v << " w" << w << " r="
                    << r << std::endl;
 
